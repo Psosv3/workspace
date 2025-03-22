@@ -6,11 +6,16 @@ services:
       - "8080"
     ports:
       - "80:80"
+      - "443:443"
     command:
       - --api.insecure=true
       - --providers.docker
       - --entryPoints.web.address=:80
-      - --providers.docker.exposedbydefault=false
+      # - --providers.docker.exposedbydefault=false
+      - --entryPoints.websecure.address=:443
+      - --certificatesresolvers.myresolver.acme.tlschallenge=true
+      - --certificatesresolvers.myresolver.acme.email=votre@email.com
+      - --certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json
       #- --log.level=DEBUG
     labels:
       - "traefik.enable=true"
@@ -22,18 +27,19 @@ services:
       - play
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
+      - ./letsencrypt:/letsencrypt
     networks:
       default:
         aliases:
-          - "front.workadventure.localhost"
-          - "play.workadventure.localhost"
-          - "room-api.workadventure.localhost"
-          - "maps.workadventure.localhost"
-          - "oidc.workadventure.localhost"
-          - "map-storage.workadventure.localhost"
-          - "xmpp.workadventure.localhost"
-          - "matrix.workadventure.localhost"
-          - "pusher.workadventure.localhost"
+          - "front.workspace.onexus.tech"
+          - "play.workspace.onexus.tech"
+          - "room-api.workspace.onexus.tech"
+          - "maps.workspace.onexus.tech"
+          - "oidc.workspace.onexus.tech"
+          - "map-storage.workspace.onexus.tech"
+          - "xmpp.workspace.onexus.tech"
+          - "matrix.workspace.onexus.tech"
+          - "pusher.workspace.onexus.tech"
   play:
     image: thecodingmachine/nodejs:v2-20-bullseye
     command: npm run dev
@@ -59,11 +65,11 @@ services:
       ENABLE_MAP_EDITOR: "$ENABLE_MAP_EDITOR"
       HOST: "0.0.0.0"
       NODE_ENV: development
-      ALLOWED_CORS_ORIGIN: "http://play.workadventure.localhost"
-      VITE_URL: "http://front.workadventure.localhost"
-      PUSHER_URL: http://play.workadventure.localhost
+      ALLOWED_CORS_ORIGIN: "http://play.workadventure.onexus.tech"
+      VITE_URL: "http://front.workspace.onexus.tech"
+      PUSHER_URL: http://play.workspace.onexus.tech
       FRONT_URL: http://play.workadventure.localhost
-      UPLOADER_URL: http://uploader.workadventure.localhost
+      UPLOADER_URL: http://uploader.workspace.onexus.tech
       ICON_URL: http://icon.workadventure.localhost
       STUN_SERVER: "$STUN_SERVER"
       TURN_SERVER: "$TURN_SERVER"
