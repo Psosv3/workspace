@@ -9,8 +9,8 @@
 # For more information on how to configure Synapse, including a complete accounting of
 # each option, go to docs/usage/configuration/config_documentation.md or
 # https://matrix-org.github.io/synapse/latest/usage/configuration/config_documentation.html
-server_name: "matrix.workadventure.localhost"
-public_baseurl: http://matrix.workadventure.localhost/
+server_name: "matrix.workspace.onexus.tech"
+public_baseurl: "https://matrix.workspace.onexus.tech"
 pid_file: /data/homeserver.pid
 listeners:
   - port: 8008
@@ -18,7 +18,7 @@ listeners:
     type: http
     x_forwarded: true
     resources:
-      - names: [ client, federation ]
+      - names: [client, federation]
         compress: false
 database:
   name: sqlite3
@@ -26,10 +26,10 @@ database:
     database: /data/homeserver.db
 log_config: "/data/matrix.workadventure.localhost.log.config"
 media_store_path: /data/media_store
-report_stats: true
-registration_shared_secret: "XJx!`J-;J4Kx!'p>J%[C!G$u8=YP6_4eEV$~Je9#~c>9sPGcDz"
-macaroon_secret_key: "E@=9DoVJg.t:.k:p8uI9*hMOQl~^JF8,rs2ak-evN5eS*pv.jF"
-form_secret: "Xa6T^,-_Ib2,^#Py=;AQ*lI:ex_QCAZQXG#P&RoTxT~2qBFIA:"
+report_stats: false
+registration_shared_secret: "${SECRET_KEY}"
+macaroon_secret_key: "${SECRET_KEY}"
+form_secret: "${SECRET_KEY}"
 signing_key_path: "/data/matrix.workadventure.localhost.signing.key"
 trusted_key_servers:
   - server_name: "matrix.org"
@@ -41,43 +41,22 @@ jwt_config:
   algorithm: "HS256"
   subject_claim: "matrixUserId"
 
-oidc_providers:
-  - idp_id: oidc-server-mock
-    idp_name: OIDC Server Mock
-    issuer: "http://oidc.workadventure.localhost"
-    skip_verification: true
-    client_id: "authorization-code-client-id"
-    client_secret: "authorization-code-client-secret"
-    scopes: [ "openid", "email", "profile" ]
-
-    user_profile_method: "userinfo_endpoint"
-    user_mapping_provider:
-      config:
-        localpart_template: "{{ user.email.split('@')[0] }}"
-        #localpart_template: "{{ user.preferred_username }}"
-        display_name_template: "{{ user.name }}"
-        email_template: "{{ user.email }}"
-#  - idp_id: workadventure-admin
-#    idp_name: WorkAdventure Admin
-#    issuer: "http://member.workadventure.localhost"
-#    skip_verification: true
-#    client_id: "4"
-#    client_secret: "SZL6NhyAyB60kHoB4iwoG0zH6cuItlqFVgHqEIJE"
-#    scopes: ["openid", "email", "profile"]
-#
-#    user_profile_method: "userinfo_endpoint"
+# Désactivez la configuration OIDC pour le moment
+#oidc_providers:
+#  oidc-server-mock:
+#    issuer: "http://oidc-server-mock:8080"
+#    client_id: "workadventure"
+#    client_secret: "workadventure-secret"
+#    scopes: ["openid", "profile", "email"]
 #    user_mapping_provider:
 #      config:
-#        localpart_template: "{{ user.email.split('@')[0] }}"
-#        #localpart_template: "{{ user.preferred_username }}"
+#        localpart_template: "{{ user.preferred_username }}"
 #        display_name_template: "{{ user.name }}"
-#        email_template: "{{ user.email }}"
 
 sso:
   client_whitelist:
     - http://pusher.workadventure.localhost/
     - http://play.workadventure.localhost/
-
 
 enable_registration: true
 enable_registration_without_verification: true
@@ -94,7 +73,6 @@ autocreate_auto_join_rooms: true
 user_directory:
   search_all_users: true
 
-
 rc_login:
   address:
     per_second: 0.15
@@ -105,3 +83,6 @@ rc_login:
   failed_attempts:
     per_second: 0.19
     burst_count: 10
+
+password_config:
+   enabled: false
