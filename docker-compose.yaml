@@ -339,6 +339,8 @@ services:
       #- ./chat:/usr/src/chat
       - ./map-storage:/usr/src/map-storage
       - ./libs:/usr/src/libs
+    labels:
+      - "traefik.enable=false"  # Désactive Traefik pour ce service car c'est un service interne
 
   redis:
     image: redis:6
