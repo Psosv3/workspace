@@ -68,7 +68,7 @@ services:
       ALLOWED_CORS_ORIGIN: "http://play.workadventure.onexus.tech"
       VITE_URL: "http://front.workspace.onexus.tech"
       PUSHER_URL: http://play.workspace.onexus.tech
-      FRONT_URL: http://play.workadventure.localhost
+      FRONT_URL: http://play.workadventure.onexus.tech
       UPLOADER_URL: http://uploader.workspace.onexus.tech
       ICON_URL: http://icon.workadventure.localhost
       STUN_SERVER: "$STUN_SERVER"
