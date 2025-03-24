@@ -42,7 +42,6 @@ services:
           - "pusher.workspace.onexus.tech"
   play:
     image: thecodingmachine/nodejs:v2-20-bullseye
-    user: "1000:1000"
     command: npm run dev
     working_dir: /usr/src/app/play
     volumes:
@@ -187,7 +186,6 @@ services:
 
   maps:
     image: thecodingmachine/php:8.1-v4-apache-node12
-    user: "1000:1000"
     environment:
       DEBUG_MODE: "$DEBUG_MODE"
       HOST: "0.0.0.0"
@@ -208,7 +206,6 @@ services:
 
   back:
     image: thecodingmachine/nodejs:v2-20-bullseye
-    user: "1000:1000"
     command: npm run dev
     working_dir: /usr/src/app/back
     environment:
@@ -260,7 +257,6 @@ services:
 
   map-storage:
     image: thecodingmachine/nodejs:v2-20-bullseye
-    user: "1000:1000"
     command: npm run start:dev
     #command: npm run profile
     working_dir: /usr/src/app/map-storage
@@ -300,7 +296,6 @@ services:
 
   uploader:
     image: thecodingmachine/nodejs:v2-20-bullseye
-    user: "1000:1000"
     command: npm run dev
     #command: npm run profile
     working_dir: /usr/src/app/uploader
@@ -334,7 +329,7 @@ services:
 
   messages:
     image: thecodingmachine/nodejs:v2-20-bullseye-build
-    user: "1000:1000"
+    
     environment:
       STARTUP_COMMAND_1: npm install
       STARTUP_COMMAND_2: npm run proto:watch
@@ -350,10 +345,10 @@ services:
 
   redis:
     image: redis:6
-    user: "1000:1000"
+ 
   redisinsight:
     image: redislabs/redisinsight:latest
-    user: "1000:1000"
+    
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.redisinsight.rule=Host(`redis.workadventure.localhost`)"
@@ -362,7 +357,6 @@ services:
 
   icon:
     image: matthiasluedtke/iconserver:v3.15.0
-    user: "1000:1000"
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.icon.rule=Host(`icon.workadventure.localhost`)"
@@ -372,7 +366,6 @@ services:
   # A mock server to test OpenID connect connectivity
   oidc-server-mock:
     image: ghcr.io/soluto/oidc-server-mock:0.7.0
-    user: "1000:1000"
     environment:
       ASPNETCORE_ENVIRONMENT: Development
       SERVER_OPTIONS_INLINE: |
@@ -473,7 +466,7 @@ services:
 
   synapse:
     image: matrixdotorg/synapse:v1.115.0
-    user: "1000:1000"
+    
     entrypoint: /data/start.sh
     labels:
       - "traefik.enable=true"
