@@ -165,7 +165,11 @@ services:
     labels:
       - "traefik.enable=true"
 
-      - "traefik.http.routers.front.rule=Host(`front.workadventure.localhost`)"
+      - "traefik.http.routers.front.rule=Host(`front.workadventure.onexus.tech`)"
+      # pour l'erreur cors
+      - "traefik.http.routers.play.entryPoints=web,websecure"
+      - "traefik.http.routers.play.tls=true"
+
       - "traefik.http.routers.front.service=front"
       - "traefik.http.services.front.loadbalancer.server.port=8080"
 
