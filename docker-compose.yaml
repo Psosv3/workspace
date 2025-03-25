@@ -16,6 +16,9 @@ services:
       - --certificatesresolvers.myresolver.acme.tlschallenge=true
       - --certificatesresolvers.myresolver.acme.email=votre@email.com
       - --certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json
+      # Forcer la redirection HTTP vers HTTPS
+      - --entrypoints.web.http.redirections.entryPoint.to=websecure
+      - --entrypoints.web.http.redirections.entryPoint.scheme=https
       #- --log.level=DEBUG
     labels:
       - "traefik.enable=true"
