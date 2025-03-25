@@ -1,3 +1,7 @@
+### COMMAND
+### git commit sans utiliser husky
+git commit -m "commentaire" --no-verify
+
 # MISE EN PRODUCTION
 
 ## CONFIGURER LE .ENV
