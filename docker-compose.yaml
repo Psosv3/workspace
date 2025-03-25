@@ -72,10 +72,11 @@ services:
       ENABLE_MAP_EDITOR: "$ENABLE_MAP_EDITOR"
       HOST: "0.0.0.0"
       NODE_ENV: development
-      ALLOWED_CORS_ORIGIN: "http://play.workspace.onexus.tech"
-      VITE_URL: "http://front.workspace.onexus.tech"
-      PUSHER_URL: http://play.workspace.onexus.tech
-      FRONT_URL: http://front.workspace.onexus.tech
+      # ALLOWED_CORS_ORIGIN: "http://play.workspace.onexus.tech"
+      ALLOWED_CORS_ORIGIN: "*"
+      VITE_URL: "https://front.workspace.onexus.tech"
+      PUSHER_URL: https://play.workspace.onexus.tech
+      FRONT_URL: https://front.workspace.onexus.tech
       UPLOADER_URL: http://uploader.workspace.onexus.tech
       ICON_URL: http://icon.workadventure.localhost
       STUN_SERVER: "$STUN_SERVER"
