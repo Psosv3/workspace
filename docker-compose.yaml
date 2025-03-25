@@ -109,8 +109,8 @@ services:
       INTERNAL_MAP_STORAGE_URL: "http://map-storage:3000"
       ENABLE_OPENAPI_ENDPOINT: "true"
       START_ROOM_URL: "$START_ROOM_URL"
-      ENABLE_CHAT: "$ENABLE_CHAT"
-      ENABLE_CHAT_UPLOAD: "$ENABLE_CHAT_UPLOAD"
+      ENABLE_CHAT: "false"
+      ENABLE_CHAT_UPLOAD: "false"
       ENABLE_CHAT_ONLINE_LIST: "$ENABLE_CHAT_ONLINE_LIST"
       ENABLE_CHAT_DISCONNECTED_LIST: "$ENABLE_CHAT_DISCONNECTED_LIST"
       SERVER_NAME: $SERVER_NAME
@@ -172,6 +172,9 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.front.rule=Host(`front.workspace.onexus.tech`)"
+      - "traefik.http.routers.front.entrypoints=web,websecure"
+      - "traefik.http.routers.front.tls=true"
+      - "traefik.http.routers.front.tls.certresolver=myresolver"
       - "traefik.http.routers.front.service=front"
       - "traefik.http.services.front.loadbalancer.server.port=8080"
       # pour l'erreur cors
