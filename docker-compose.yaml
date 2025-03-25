@@ -69,10 +69,10 @@ services:
       ENABLE_MAP_EDITOR: "$ENABLE_MAP_EDITOR"
       HOST: "0.0.0.0"
       NODE_ENV: development
-      ALLOWED_CORS_ORIGIN: "http://play.workadventure.onexus.tech"
+      ALLOWED_CORS_ORIGIN: "http://play.workspace.onexus.tech"
       VITE_URL: "http://front.workspace.onexus.tech"
       PUSHER_URL: http://play.workspace.onexus.tech
-      FRONT_URL: http://play.workadventure.onexus.tech
+      FRONT_URL: http://front.workspace.onexus.tech
       UPLOADER_URL: http://uploader.workspace.onexus.tech
       ICON_URL: http://icon.workadventure.localhost
       STUN_SERVER: "$STUN_SERVER"
@@ -168,7 +168,9 @@ services:
       IFRAMELY_KEY: "$IFRAMELY_KEY"
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.front.rule=Host(`front.workadventure.onexus.tech`)"
+      - "traefik.http.routers.front.rule=Host(`front.workspace.onexus.tech`)"
+      - "traefik.http.routers.front.service=front"
+      - "traefik.http.services.front.loadbalancer.server.port=8080"
       # pour l'erreur cors
       - "traefik.http.routers.play.entryPoints=web,websecure"
       - "traefik.http.routers.play.tls=true"
