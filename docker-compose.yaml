@@ -8,22 +8,26 @@ services:
       - "80:80"
       - "443:443"
     command:
-      - --api.insecure=true
+      - --api.insecure=false
       - --providers.docker
       - --entryPoints.web.address=:80
       # - --providers.docker.exposedbydefault=false
       - --entryPoints.websecure.address=:443
-      - --certificatesresolvers.myresolver.acme.tlschallenge=true
-      - --certificatesresolvers.myresolver.acme.email=votre@email.com
+      - ----certificatesresolvers.letsencrypt.acme.email=sataboum3@gmail.com
       - --certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json
+      - --certificatesresolvers.letsencrypt.acme.httpchallenge=true
+      - --certificatesresolvers.letsencrypt.acme.httpchallenge.entrypoint=web
       # Forcer la redirection HTTP vers HTTPS
       - --entrypoints.web.http.redirections.entryPoint.to=websecure
       - --entrypoints.web.http.redirections.entryPoint.scheme=https
       #- --log.level=DEBUG
     labels:
       - "traefik.enable=true"
-      - "traefik.port=8080"
+      # - "traefik.port=8080"
       - "traefik.http.routers.traefik.rule=Host(`traefik.workspace.onexus.tech`)"
+      - "traefik.http.routers.main.entrypoints=websecure"
+      - "traefik.http.routers.main.tls=true"
+      - "traefik.http.routers.main.tls.certresolver=letsencrypt" 
       - "traefik.http.routers.traefik.service=api@internal"
       - "traefik.http.routers.main.rule=Host(`workspace.onexus.tech`)"
       - "traefik.http.routers.main.middlewares=redirect-to-play"
@@ -175,7 +179,7 @@ services:
       - "traefik.http.routers.front.rule=Host(`front.workspace.onexus.tech`)"
       - "traefik.http.routers.front.entrypoints=web,websecure"
       - "traefik.http.routers.front.tls=true"
-      - "traefik.http.routers.front.tls.certresolver=myresolver"
+      - "traefik.http.routers.front.tls.certresolver=letsencrypt"
       - "traefik.http.routers.front.service=front"
       - "traefik.http.services.front.loadbalancer.server.port=8080"
       # pour l'erreur cors
