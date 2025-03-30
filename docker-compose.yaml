@@ -20,22 +20,14 @@ services:
       - "--certificatesresolvers.letsencrypt.acme.storage=/letsencrypt/acme.json"
       - "--certificatesresolvers.letsencrypt.acme.httpchallenge=true"
       - "--certificatesresolvers.letsencrypt.acme.httpchallenge.entrypoint=web"
-      - "--certificatesresolvers.letsencrypt.acme.caserver=https://acme-v02.api.letsencrypt.org/directory"
       # Redirection HTTP vers HTTPS
       - "--entrypoints.web.http.redirections.entrypoint.to=websecure"
       - "--entrypoints.web.http.redirections.entrypoint.scheme=https"
     labels:
       - "traefik.enable=true"
-      # - "traefik.port=8080"
-      # - "traefik.http.routers.traefik.rule=Host(`traefik.workspace.onexus.tech`)"
-      # - "traefik.http.routers.main.entrypoints=websecure"
-      # - "traefik.http.routers.main.tls=true"
-      # - "traefik.http.routers.main.tls.certresolver=letsencrypt" 
-      # - "traefik.http.routers.traefik.service=api@internal"
-      # - "traefik.http.routers.main.rule=Host(`workspace.onexus.tech`)"
-      # - "traefik.http.routers.main.middlewares=redirect-to-play"
-      # - "traefik.http.middlewares.redirect-to-play.redirectregex.regex=^https?://workspace\\.onexus\\.tech/(.*)"
-      # - "traefik.http.middlewares.redirect-to-play.redirectregex.replacement=https://play.workspace.onexus.tech/$${1}"
+      - "traefik.port=8080"
+      - "traefik.http.routers.traefik.rule=Host(`traefik.workadventure.localhost`)"
+      - "traefik.http.routers.traefik.service=api@internal"
     depends_on:
       - back
       - play
@@ -47,13 +39,13 @@ services:
         aliases:
           - "front.workspace.onexus.tech"
           - "play.workspace.onexus.tech"
-          - "room-api.workspace.onexus.tech"
           - "maps.workspace.onexus.tech"
-          - "oidc.workspace.onexus.tech"
-          - "map-storage.workspace.onexus.tech"
-          - "xmpp.workspace.onexus.tech"
-          - "matrix.workspace.onexus.tech"
-          - "pusher.workspace.onexus.tech"
+          - "room-api.workadventure.localhost"
+          - "oidc.workadventure.localhost"
+          - "map-storage.workadventure.localhost"
+          - "xmpp.workadventure.localhost"
+          - "matrix.workadventure.localhost"
+          - "pusher.workadventure.localhost"
     restart: unless-stopped
   play:
     image: thecodingmachine/nodejs:v2-20-bullseye
@@ -80,13 +72,12 @@ services:
       ENABLE_MAP_EDITOR: "$ENABLE_MAP_EDITOR"
       HOST: "0.0.0.0"
       NODE_ENV: development
-      # ALLOWED_CORS_ORIGIN: "http://play.workspace.onexus.tech"
       ALLOWED_CORS_ORIGIN: "*"
       VITE_URL: "https://front.workspace.onexus.tech"
-      PUSHER_URL: https://play.workspace.onexus.tech
-      FRONT_URL: https://front.workspace.onexus.tech
-      UPLOADER_URL: http://uploader.workspace.onexus.tech
-      ICON_URL: http://icon.workspace.onexus.tech
+      PUSHER_URL: "https://play.workspace.onexus.tech"
+      FRONT_URL: "https://front.workspace.onexus.tech"
+      UPLOADER_URL: "https://uploader.workspace.onexus.tech"
+      ICON_URL: "https://icon.workspace.onexus.tech"
       STUN_SERVER: "$STUN_SERVER"
       TURN_SERVER: "$TURN_SERVER"
       DISABLE_NOTIFICATIONS: "$DISABLE_NOTIFICATIONS"
@@ -114,7 +105,7 @@ services:
       API_URL: back:50051
       DISABLE_ANONYMOUS: $DISABLE_ANONYMOUS
       #Map editor
-      PUBLIC_MAP_STORAGE_URL: "http://map-storage.workspace.onexus.tech"
+      PUBLIC_MAP_STORAGE_URL: "https://map-storage.workspace.onexus.tech"
       INTERNAL_MAP_STORAGE_URL: "http://map-storage:3000"
       ENABLE_OPENAPI_ENDPOINT: "true"
       START_ROOM_URL: "$START_ROOM_URL"
@@ -171,46 +162,37 @@ services:
       GOOGLE_DRIVE_PICKER_APP_ID: "$GOOGLE_DRIVE_PICKER_APP_ID"
       #Chat
       MATRIX_API_URI: http://synapse:8008/
-      MATRIX_PUBLIC_URI: http://matrix.workspace.onexus.tech
+      MATRIX_PUBLIC_URI: http://matrix.workadventure.localhost
       MATRIX_ADMIN_USER: admin
       MATRIX_ADMIN_PASSWORD: MySecretPassword
-      MATRIX_DOMAIN: matrix.workspace.onexus.tech
+      MATRIX_DOMAIN: matrix.workadventure.localhost
       # oEmbed providers
       EMBEDLY_KEY: "$EMBEDLY_KEY"
       IFRAMELY_KEY: "$IFRAMELY_KEY"
     labels:
-      # - "traefik.enable=true"
-      # - "traefik.http.routers.front.rule=Host(`front.workspace.onexus.tech`)"
-      # - "traefik.http.routers.front.entrypoints=web,websecure"
-      # - "traefik.http.routers.front.tls=true"
-      # - "traefik.http.routers.front.tls.certresolver=letsencrypt"
-      # - "traefik.http.routers.front.service=front"
-      # - "traefik.http.services.front.loadbalancer.server.port=8080"
-      # # pour l'erreur cors
-      # - "traefik.http.routers.play.entryPoints=web,websecure"
-      # - "traefik.http.routers.play.tls=true"
-      # - "traefik.http.routers.play.rule=Host(`play.workspace.onexus.tech`)"
-      # - "traefik.http.routers.play.service=play"
-      # - "traefik.http.services.play.loadbalancer.server.port=3000"
-      # - "traefik.http.routers.play-ws.rule=HostRegexp(`{domain:.*}`) && ( Path(`/admin/rooms`) || Path(`/room`) )"
-      # - "traefik.http.routers.play-ws.priority=2"
-      # - "traefik.http.routers.play-ws.service=play-ws"
-      # - "traefik.http.services.play-ws.loadbalancer.server.port=3001"
       - "traefik.enable=true"
       # Route pour play
       - "traefik.http.routers.play.rule=Host(`play.workspace.onexus.tech`)"
       - "traefik.http.routers.play.entrypoints=websecure"
       - "traefik.http.routers.play.tls=true"
       - "traefik.http.routers.play.tls.certresolver=letsencrypt"
-      - "traefik.http.routers.play.service=play-service"
-      - "traefik.http.services.play-service.loadbalancer.server.port=8080"
+      - "traefik.http.services.play.loadbalancer.server.port=8080"
       # Route pour front
       - "traefik.http.routers.front.rule=Host(`front.workspace.onexus.tech`)"
       - "traefik.http.routers.front.entrypoints=websecure"
       - "traefik.http.routers.front.tls=true"
       - "traefik.http.routers.front.tls.certresolver=letsencrypt"
-      - "traefik.http.routers.front.service=front-service"
-      - "traefik.http.services.front-service.loadbalancer.server.port=8080"
+      - "traefik.http.services.front.loadbalancer.server.port=8080"
+
+      - "traefik.http.routers.room-api.rule=Host(`room-api.workadventure.localhost`)"
+      - "traefik.http.routers.room-api.service=room-api"
+      - "traefik.http.services.room-api.loadbalancer.server.port=50051"
+      - "traefik.http.services.room-api.loadbalancer.server.scheme=h2c"
+
+      - "traefik.http.routers.play-ws.rule=HostRegexp(`{domain:.*}`) && ( Path(`/admin/rooms`) || Path(`/room`) )"
+      - "traefik.http.routers.play-ws.priority=2"
+      - "traefik.http.routers.play-ws.service=play-ws"
+      - "traefik.http.services.play-ws.loadbalancer.server.port=3001"
 
   maps:
     image: thecodingmachine/php:8.1-v4-apache-node12
@@ -218,7 +200,7 @@ services:
       DEBUG_MODE: "$DEBUG_MODE"
       HOST: "0.0.0.0"
       NODE_ENV: development
-      FRONT_URL: http://play.workspace.onexus.tech
+      FRONT_URL: "https://play.workspace.onexus.tech"
       #APACHE_DOCUMENT_ROOT: dist/
       #APACHE_EXTENSIONS: headers
       #APACHE_EXTENSION_HEADERS: 1
@@ -227,16 +209,12 @@ services:
     volumes:
       - ./maps:/var/www/html
     labels:
-      # - "traefik.enable=true"
-      # - "traefik.http.routers.maps.rule=Host(`maps.workspace.onexus.tech`)"
-      # - "traefik.http.routers.maps.entryPoints=web,traefik"
-      # - "traefik.http.services.maps.loadbalancer.server.port=80"
       - "traefik.enable=true"
       - "traefik.http.routers.maps.rule=Host(`maps.workspace.onexus.tech`)"
       - "traefik.http.routers.maps.entrypoints=websecure"
       - "traefik.http.routers.maps.tls=true"
       - "traefik.http.routers.maps.tls.certresolver=letsencrypt"
-      - "traefik.http.services.maps.loadbalancer.server.port=2746"
+      - "traefik.http.services.maps.loadbalancer.server.port=80"
 
   back:
     image: thecodingmachine/nodejs:v2-20-bullseye
@@ -244,7 +222,7 @@ services:
     working_dir: /usr/src/app/back
     environment:
       DEBUG: "*"
-      PLAY_URL: http://play.workspace.onexus.tech
+      PLAY_URL: "https://play.workspace.onexus.tech"
       # On startup, we ask the messages container to regenerate the files.
       # Note: we need to use this "messages" container because of ARM64 processors that are not supported with protoc (used in "messages" container)
       #STARTUP_COMMAND_0: touch /usr/src/app/back/src/Messages/generate_request/need_regenerate
@@ -269,7 +247,7 @@ services:
       STORE_VARIABLES_FOR_LOCAL_MAPS: "true"
       PROMETHEUS_AUTHORIZATION_TOKEN: "$PROMETHEUS_AUTHORIZATION_TOKEN"
       MAP_STORAGE_URL: "map-storage:50053"
-      PUBLIC_MAP_STORAGE_URL: "http://map-storage.workspace.onexus.tech"
+      PUBLIC_MAP_STORAGE_URL: "https://map-storage.workspace.onexus.tech"
       INTERNAL_MAP_STORAGE_URL: "http://map-storage:3000"
       PLAYER_VARIABLES_MAX_TTL: $PLAYER_VARIABLES_MAX_TTL
       ENABLE_CHAT: "$ENABLE_CHAT"
@@ -286,7 +264,9 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.back.rule=Host(`api.workspace.onexus.tech`)"
-      - "traefik.http.routers.back.entryPoints=web"
+      - "traefik.http.routers.back.entrypoints=websecure"
+      - "traefik.http.routers.back.tls=true"
+      - "traefik.http.routers.back.tls.certresolver=letsencrypt"
       - "traefik.http.services.back.loadbalancer.server.port=8080"
 
   map-storage:
@@ -310,7 +290,7 @@ services:
       SENTRY_RELEASE: $SENTRY_RELEASE
       PATH_PREFIX: ""
       MAP_STORAGE_API_TOKEN: "FFVSGBSGBSGFB23SFGBSFG4BS"
-      PUSHER_URL: http://play.workspace.onexus.tech
+      PUSHER_URL: http://play.workadventure.localhost
       WHITELISTED_RESOURCE_URLS: ""
     volumes:
       - .:/usr/src/app
@@ -319,11 +299,11 @@ services:
       - "9233:9229"
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.map-storage.rule=Host(`map-storage.workspace.onexus.tech`)"
+      - "traefik.http.routers.map-storage.rule=Host(`map-storage.workadventure.localhost`)"
       - "traefik.http.routers.map-storage.entryPoints=web"
       - "traefik.http.routers.map-storage.service=map-storage"
       - "traefik.http.services.map-storage.loadbalancer.server.port=3000"
-      - "traefik.http.routers.map-storage-ui.rule=Host(`map-storage.workspace.onexus.tech`) && PathPrefix(`/ui/`)"
+      - "traefik.http.routers.map-storage-ui.rule=Host(`map-storage.workadventure.localhost`) && PathPrefix(`/ui/`)"
       - "traefik.http.routers.map-storage-ui.entryPoints=web"
       - "traefik.http.routers.map-storage-ui.service=map-storage-ui"
       - "traefik.http.services.map-storage-ui.loadbalancer.server.port=8080"
@@ -336,7 +316,7 @@ services:
     environment:
       DEBUG: "*"
       STARTUP_COMMAND_1: ../npm-install.sh
-      UPLOADER_URL: http://uploader.workspace.onexus.tech
+      UPLOADER_URL: http://uploader.workadventure.localhost
       #AWS
       AWS_ACCESS_KEY_ID: "$AWS_ACCESS_KEY_ID"
       AWS_SECRET_ACCESS_KEY: "$AWS_SECRET_ACCESS_KEY"
@@ -357,13 +337,12 @@ services:
       - "9234:9229"
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.uploader.rule=Host(`uploader.workspace.onexus.tech`)"
+      - "traefik.http.routers.uploader.rule=Host(`uploader.workadventure.localhost`)"
       - "traefik.http.routers.uploader.entryPoints=web"
       - "traefik.http.services.uploader.loadbalancer.server.port=8080"
 
   messages:
     image: thecodingmachine/nodejs:v2-20-bullseye-build
-    
     environment:
       STARTUP_COMMAND_1: npm install
       STARTUP_COMMAND_2: npm run proto:watch
@@ -374,18 +353,15 @@ services:
       #- ./chat:/usr/src/chat
       - ./map-storage:/usr/src/map-storage
       - ./libs:/usr/src/libs
-    labels:
-      - "traefik.enable=false"  # Désactive Traefik pour ce service car c'est un service interne
 
   redis:
     image: redis:6
- 
+
   redisinsight:
     image: redislabs/redisinsight:latest
-    
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.redisinsight.rule=Host(`redis.workspace.onexus.tech`)"
+      - "traefik.http.routers.redisinsight.rule=Host(`redis.workadventure.localhost`)"
       - "traefik.http.routers.redisinsight.entryPoints=web"
       - "traefik.http.services.redisinsight.loadbalancer.server.port=8001"
 
@@ -393,7 +369,7 @@ services:
     image: matthiasluedtke/iconserver:v3.15.0
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.icon.rule=Host(`icon.workspace.onexus.tech`)"
+      - "traefik.http.routers.icon.rule=Host(`icon.workadventure.localhost`)"
       - "traefik.http.routers.icon.entryPoints=web"
       - "traefik.http.services.icon.loadbalancer.server.port=8080"
 
@@ -491,7 +467,7 @@ services:
       - ./contrib/oidc-server-mock:/tmp/config:ro
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.oidc.rule=Host(`oidc.workspace.onexus.tech`)"
+      - "traefik.http.routers.oidc.rule=Host(`oidc.workadventure.localhost`)"
       - "traefik.http.routers.oidc.entryPoints=web"
     healthcheck:
       #disable: true
@@ -500,23 +476,22 @@ services:
 
   synapse:
     image: matrixdotorg/synapse:v1.115.0
-    
     entrypoint: /data/start.sh
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.matrix.rule=Host(`matrix.workspace.onexus.tech`)"
+      - "traefik.http.routers.matrix.rule=Host(`matrix.workadventure.localhost`)"
       - "traefik.http.routers.matrix.entryPoints=web"
       - "traefik.http.services.matrix.loadbalancer.server.port=8008"
       - "traefik.http.routers.matrix.service=matrix"
     volumes:
       - ./synapse:/data/
       #- ./synapse/homeserver.template.yaml:/data/homeserver.template.yaml
-      - ./synapse/federation:/etc/nginx/vhost.d/matrix.workspace.onexus.tech
+      - ./synapse/federation:/etc/nginx/vhost.d/matrix.workadventure.localhost
     environment:
-      VIRTUAL_HOST: "matrix.workspace.onexus.tech"
+      VIRTUAL_HOST: "matrix.workadventure.localhost"
       VIRTUAL_PORT: 8008
-      LETSENCRYPT_HOST: "matrix.workspace.onexus.tech"
-      SYNAPSE_SERVER_NAME: "matrix.workspace.onexus.tech"
+      LETSENCRYPT_HOST: "matrix.workadventure.localhost"
+      SYNAPSE_SERVER_NAME: "matrix.workadventure.localhost"
       SYNAPSE_REPORT_STATS: "yes"
       MATRIX_ADMIN_USER: admin
       MATRIX_ADMIN_PASSWORD: MySecretPassword
