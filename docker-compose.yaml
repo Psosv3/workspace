@@ -8,31 +8,30 @@ services:
       - "80:80"
       - "443:443"
     command:
-      - --api.insecure=false
-      - --providers.docker
-      - --entryPoints.web.address=:80
-      # - --providers.docker.exposedbydefault=false
-      - --entryPoints.websecure.address=:443
-      - --certificatesresolvers.letsencrypt.acme.email=sataboum3@gmail.com
-      - --certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json
-      - --certificatesresolvers.letsencrypt.acme.httpchallenge=true
-      - --certificatesresolvers.letsencrypt.acme.httpchallenge.entrypoint=web
-      # Forcer la redirection HTTP vers HTTPS
-      - --entrypoints.web.http.redirections.entryPoint.to=websecure
-      - --entrypoints.web.http.redirections.entryPoint.scheme=https
-      #- --log.level=DEBUG
+      - "--log.level=DEBUG"
+      - "--api.insecure=false"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.websecure.address=:443"
+      - "--certificatesresolvers.letsencrypt.acme.email=sataboum3@gmail.com"
+      - "--certificatesresolvers.letsencrypt.acme.storage=/letsencrypt/acme.json"
+      - "--certificatesresolvers.letsencrypt.acme.httpchallenge=true"
+      - "--certificatesresolvers.letsencrypt.acme.httpchallenge.entrypoint=web"
+      - "--entrypoints.web.http.redirections.entrypoint.to=websecure"
+      - "--entrypoints.web.http.redirections.entrypoint.scheme=https"
     labels:
       - "traefik.enable=true"
       # - "traefik.port=8080"
-      - "traefik.http.routers.traefik.rule=Host(`traefik.workspace.onexus.tech`)"
-      - "traefik.http.routers.main.entrypoints=websecure"
-      - "traefik.http.routers.main.tls=true"
-      - "traefik.http.routers.main.tls.certresolver=letsencrypt" 
-      - "traefik.http.routers.traefik.service=api@internal"
-      - "traefik.http.routers.main.rule=Host(`workspace.onexus.tech`)"
-      - "traefik.http.routers.main.middlewares=redirect-to-play"
-      - "traefik.http.middlewares.redirect-to-play.redirectregex.regex=^https?://workspace\\.onexus\\.tech/(.*)"
-      - "traefik.http.middlewares.redirect-to-play.redirectregex.replacement=https://play.workspace.onexus.tech/$${1}"
+      # - "traefik.http.routers.traefik.rule=Host(`traefik.workspace.onexus.tech`)"
+      # - "traefik.http.routers.main.entrypoints=websecure"
+      # - "traefik.http.routers.main.tls=true"
+      # - "traefik.http.routers.main.tls.certresolver=letsencrypt" 
+      # - "traefik.http.routers.traefik.service=api@internal"
+      # - "traefik.http.routers.main.rule=Host(`workspace.onexus.tech`)"
+      # - "traefik.http.routers.main.middlewares=redirect-to-play"
+      # - "traefik.http.middlewares.redirect-to-play.redirectregex.regex=^https?://workspace\\.onexus\\.tech/(.*)"
+      # - "traefik.http.middlewares.redirect-to-play.redirectregex.replacement=https://play.workspace.onexus.tech/$${1}"
     depends_on:
       - back
       - play
@@ -175,23 +174,36 @@ services:
       EMBEDLY_KEY: "$EMBEDLY_KEY"
       IFRAMELY_KEY: "$IFRAMELY_KEY"
     labels:
+      # - "traefik.enable=true"
+      # - "traefik.http.routers.front.rule=Host(`front.workspace.onexus.tech`)"
+      # - "traefik.http.routers.front.entrypoints=web,websecure"
+      # - "traefik.http.routers.front.tls=true"
+      # - "traefik.http.routers.front.tls.certresolver=letsencrypt"
+      # - "traefik.http.routers.front.service=front"
+      # - "traefik.http.services.front.loadbalancer.server.port=8080"
+      # # pour l'erreur cors
+      # - "traefik.http.routers.play.entryPoints=web,websecure"
+      # - "traefik.http.routers.play.tls=true"
+      # - "traefik.http.routers.play.rule=Host(`play.workspace.onexus.tech`)"
+      # - "traefik.http.routers.play.service=play"
+      # - "traefik.http.services.play.loadbalancer.server.port=3000"
+      # - "traefik.http.routers.play-ws.rule=HostRegexp(`{domain:.*}`) && ( Path(`/admin/rooms`) || Path(`/room`) )"
+      # - "traefik.http.routers.play-ws.priority=2"
+      # - "traefik.http.routers.play-ws.service=play-ws"
+      # - "traefik.http.services.play-ws.loadbalancer.server.port=3001"
       - "traefik.enable=true"
+      # Configuration pour play
+      - "traefik.http.routers.play.rule=Host(`play.workspace.onexus.tech`)"
+      - "traefik.http.routers.play.entrypoints=websecure"
+      - "traefik.http.routers.play.tls=true"
+      - "traefik.http.routers.play.tls.certresolver=letsencrypt"
+      - "traefik.http.services.play.loadbalancer.server.port=8080"
+      # Configuration pour front (même service)
       - "traefik.http.routers.front.rule=Host(`front.workspace.onexus.tech`)"
-      - "traefik.http.routers.front.entrypoints=web,websecure"
+      - "traefik.http.routers.front.entrypoints=websecure"
       - "traefik.http.routers.front.tls=true"
       - "traefik.http.routers.front.tls.certresolver=letsencrypt"
-      - "traefik.http.routers.front.service=front"
       - "traefik.http.services.front.loadbalancer.server.port=8080"
-      # pour l'erreur cors
-      - "traefik.http.routers.play.entryPoints=web,websecure"
-      - "traefik.http.routers.play.tls=true"
-      - "traefik.http.routers.play.rule=Host(`play.workspace.onexus.tech`)"
-      - "traefik.http.routers.play.service=play"
-      - "traefik.http.services.play.loadbalancer.server.port=3000"
-      - "traefik.http.routers.play-ws.rule=HostRegexp(`{domain:.*}`) && ( Path(`/admin/rooms`) || Path(`/room`) )"
-      - "traefik.http.routers.play-ws.priority=2"
-      - "traefik.http.routers.play-ws.service=play-ws"
-      - "traefik.http.services.play-ws.loadbalancer.server.port=3001"
 
   maps:
     image: thecodingmachine/php:8.1-v4-apache-node12
@@ -208,10 +220,16 @@ services:
     volumes:
       - ./maps:/var/www/html
     labels:
+      # - "traefik.enable=true"
+      # - "traefik.http.routers.maps.rule=Host(`maps.workspace.onexus.tech`)"
+      # - "traefik.http.routers.maps.entryPoints=web,traefik"
+      # - "traefik.http.services.maps.loadbalancer.server.port=80"
       - "traefik.enable=true"
       - "traefik.http.routers.maps.rule=Host(`maps.workspace.onexus.tech`)"
-      - "traefik.http.routers.maps.entryPoints=web,traefik"
-      - "traefik.http.services.maps.loadbalancer.server.port=80"
+      - "traefik.http.routers.maps.entrypoints=websecure"
+      - "traefik.http.routers.maps.tls=true"
+      - "traefik.http.routers.maps.tls.certresolver=letsencrypt"
+      - "traefik.http.services.maps.loadbalancer.server.port=2746"
 
   back:
     image: thecodingmachine/nodejs:v2-20-bullseye

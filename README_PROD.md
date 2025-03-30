@@ -75,3 +75,6 @@ sudo chmod +x start.sh
 
 ### Assurez-vous que les permissions sont correctes pour tout le dossier
 sudo chown -R 991:991 .
+
+### SI PROBLEME DE SECURITE DOSSIER
+lancer fix-permissions.sh
