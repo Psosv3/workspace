@@ -202,13 +202,15 @@ services:
       - "traefik.http.routers.play.entrypoints=websecure"
       - "traefik.http.routers.play.tls=true"
       - "traefik.http.routers.play.tls.certresolver=letsencrypt"
-      - "traefik.http.services.play.loadbalancer.server.port=8080"
+      - "traefik.http.routers.play.service=play-service"
+      - "traefik.http.services.play-service.loadbalancer.server.port=8080"
       # Route pour front
       - "traefik.http.routers.front.rule=Host(`front.workspace.onexus.tech`)"
       - "traefik.http.routers.front.entrypoints=websecure"
       - "traefik.http.routers.front.tls=true"
       - "traefik.http.routers.front.tls.certresolver=letsencrypt"
-      - "traefik.http.services.front.loadbalancer.server.port=8080"
+      - "traefik.http.routers.front.service=front-service"
+      - "traefik.http.services.front-service.loadbalancer.server.port=8080"
 
   maps:
     image: thecodingmachine/php:8.1-v4-apache-node12
