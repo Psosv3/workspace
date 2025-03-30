@@ -208,6 +208,7 @@ services:
       - "traefik.http.routers.front.entrypoints=websecure"
       - "traefik.http.routers.front.tls=true"
       - "traefik.http.routers.front.tls.certresolver=letsencrypt"
+      - "traefik.http.services.front.loadbalancer.server.port=8080"
 
   maps:
     image: thecodingmachine/php:8.1-v4-apache-node12
