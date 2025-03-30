@@ -12,12 +12,16 @@ services:
       - "--api.insecure=false"
       - "--providers.docker=true"
       - "--providers.docker.exposedbydefault=false"
+      # Points d'entrée
       - "--entrypoints.web.address=:80"
       - "--entrypoints.websecure.address=:443"
+      # Configuration ACME (Let's Encrypt)
       - "--certificatesresolvers.letsencrypt.acme.email=sataboum3@gmail.com"
       - "--certificatesresolvers.letsencrypt.acme.storage=/letsencrypt/acme.json"
       - "--certificatesresolvers.letsencrypt.acme.httpchallenge=true"
       - "--certificatesresolvers.letsencrypt.acme.httpchallenge.entrypoint=web"
+      - "--certificatesresolvers.letsencrypt.acme.caserver=https://acme-v02.api.letsencrypt.org/directory"
+      # Redirection HTTP vers HTTPS
       - "--entrypoints.web.http.redirections.entrypoint.to=websecure"
       - "--entrypoints.web.http.redirections.entrypoint.scheme=https"
     labels:
@@ -36,8 +40,8 @@ services:
       - back
       - play
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-      - ./letsencrypt:/letsencrypt
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+      - "./letsencrypt:/letsencrypt"
     networks:
       default:
         aliases:
@@ -50,6 +54,7 @@ services:
           - "xmpp.workspace.onexus.tech"
           - "matrix.workspace.onexus.tech"
           - "pusher.workspace.onexus.tech"
+    restart: unless-stopped
   play:
     image: thecodingmachine/nodejs:v2-20-bullseye
     command: npm run dev
@@ -192,18 +197,17 @@ services:
       # - "traefik.http.routers.play-ws.service=play-ws"
       # - "traefik.http.services.play-ws.loadbalancer.server.port=3001"
       - "traefik.enable=true"
-      # Configuration pour play
+      # Route pour play
       - "traefik.http.routers.play.rule=Host(`play.workspace.onexus.tech`)"
       - "traefik.http.routers.play.entrypoints=websecure"
       - "traefik.http.routers.play.tls=true"
       - "traefik.http.routers.play.tls.certresolver=letsencrypt"
       - "traefik.http.services.play.loadbalancer.server.port=8080"
-      # Configuration pour front (même service)
+      # Route pour front
       - "traefik.http.routers.front.rule=Host(`front.workspace.onexus.tech`)"
       - "traefik.http.routers.front.entrypoints=websecure"
       - "traefik.http.routers.front.tls=true"
       - "traefik.http.routers.front.tls.certresolver=letsencrypt"
-      - "traefik.http.services.front.loadbalancer.server.port=8080"
 
   maps:
     image: thecodingmachine/php:8.1-v4-apache-node12
